@@ -1,11 +1,638 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cute Blue Audio Player - Sweet Memories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 25%, #E0F6FF 50%, #B0E0E6 75%, #87CEEB 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating cute elements background */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .element {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 20px;
+            animation: floatElement 10s ease-in-out infinite;
+        }
+
+        .element:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; font-size: 15px; }
+        .element:nth-child(2) { left: 20%; top: 80%; animation-delay: 1s; font-size: 25px; }
+        .element:nth-child(3) { left: 60%; top: 40%; animation-delay: 2s; font-size: 18px; }
+        .element:nth-child(4) { left: 80%; top: 70%; animation-delay: 3s; font-size: 22px; }
+        .element:nth-child(5) { left: 40%; top: 10%; animation-delay: 4s; font-size: 16px; }
+        .element:nth-child(6) { left: 90%; top: 30%; animation-delay: 5s; font-size: 20px; }
+        .element:nth-child(7) { left: 5%; top: 60%; animation-delay: 6s; font-size: 19px; }
+        .element:nth-child(8) { left: 70%; top: 85%; animation-delay: 7s; font-size: 17px; }
+
+        @keyframes floatElement {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg) scale(1); 
+                opacity: 0.4; 
+            }
+            50% { 
+                transform: translateY(-30px) rotate(180deg) scale(1.2); 
+                opacity: 0.8; 
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .main-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-style: italic;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Photo frame section */
+        .photo-frame-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(135, 206, 235, 0.3);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+
+        .photo-frame-title {
+            color: #4169E1;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .photo-frame {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            border: 8px solid #87CEEB;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #E0F6FF, #B0E0E6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(135, 206, 235, 0.3);
+            position: relative;
+        }
+
+        .photo-frame::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #FF69B4, #87CEEB, #98FB98, #FFB6C1);
+            border-radius: 25px;
+            z-index: -1;
+            animation: rainbow 3s ease-in-out infinite;
+        }
+
+        @keyframes rainbow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .photo-placeholder {
+            color: #87CEEB;
+            font-size: 4rem;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .photo-upload-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(135, 206, 235, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+        }
+
+        .photo-upload-area:hover {
+            background: rgba(135, 206, 235, 0.2);
+        }
+
+        .upload-text {
+            color: #4169E1;
+            font-size: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        #photoInput {
+            display: none;
+        }
+
+        .frame-decorations {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            pointer-events: none;
+        }
+
+        .frame-decoration {
+            position: absolute;
+            font-size: 1.5rem;
+            color: #87CEEB;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        .frame-decoration:nth-child(1) { top: -5px; left: -5px; animation-delay: 0s; }
+        .frame-decoration:nth-child(2) { top: -5px; right: -5px; animation-delay: 0.5s; }
+        .frame-decoration:nth-child(3) { bottom: -5px; left: -5px; animation-delay: 1s; }
+        .frame-decoration:nth-child(4) { bottom: -5px; right: -5px; animation-delay: 1.5s; }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Audio player section */
+        .audio-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(135, 206, 235, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .audio-title {
+            color: #4169E1;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .custom-audio-player {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .play-btn {
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
+            border: none;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(65, 105, 225, 0.4);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(65, 105, 225, 0.6);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4169E1;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4169E1, #87CEEB);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Features grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            border: 2px solid rgba(135, 206, 235, 0.3);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(135, 206, 235, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #4169E1;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Quotes section */
+        .quotes-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            border: 2px solid rgba(135, 206, 235, 0.3);
+        }
+
+        .quote-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #444;
+            margin-bottom: 1rem;
+            animation: fadeInOut 5s ease-in-out infinite;
+        }
+
+        .quote-author {
+            color: #4169E1;
+            font-weight: 600;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .photo-frame-section,
+            .audio-section {
+                padding: 1.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .photo-frame {
+                height: 250px;
+            }
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="floating-elements">
+        <div class="element">💙</div>
+        <div class="element">🎵</div>
+        <div class="element">✨</div>
+        <div class="element">🌟</div>
+        <div class="element">💫</div>
+        <div class="element">🎶</div>
+        <div class="element">💎</div>
+        <div class="element">🌈</div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">🎵 M.H.U.T 🎵</h1>
+            <p class="subtitle"> hehe</p>
+        </div>
+
+        <!-- Photo Frame Section -->
+        <div class="photo-frame-section">
+            <h2 class="photo-frame-title">📸 Sweet piyooo 📸</h2>
+            <div class="photo-frame">
+                <div class="frame-decorations">
+                    <div class="frame-decoration">⭐</div>
+                    <div class="frame-decoration">💫</div>
+                    <div class="frame-decoration">✨</div>
+                    <div class="frame-decoration">🌟</div>
+                </div>
+                <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
+                    <div class="photo-placeholder" id="photoPlaceholder">📷</div>
+                    <div class="upload-text">Klik untuk upload foto kesayangan mu! 💙</div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*">
+            </div>
+        </div>
+
+        <!-- Audio Player Section -->
+        <div class="audio-section">
+            <h2 class="audio-title">🎵 Music Player 🎵</h2>
+            
+            <div class="custom-audio-player">
+                <audio id="audioPlayer" preload="metadata">
+                    <source src="sfx1.mp3" type="audio/mpeg">
+                    <source src="love-song.ogg" type="audio/ogg">
+                    Browser kamu tidak mendukung pemutar audio.
+                </audio>
+                
+                <div class="audio-controls">
+                    <button class="play-btn" id="playBtn">▶️</button>
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+                    </div>
+                </div>
+                
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+            
+            <p style="color: #666; text-align: center; font-style: italic;">
+                🎶 Putar musik favoritmu sambil melihat foto indah 🎶
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📸</div>
+                <h3 class="feature-title">Photo Frame</h3>
+                <p class="feature-description">Bingkai foto yang lucu dan imut dengan dekorasi berkilau untuk menyimpan kenangan indah</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎵</div>
+                <h3 class="feature-title">Music Player</h3>
+                <p class="feature-description">Pemutar musik dengan kontrol lengkap untuk menemani momen spesial dengan foto kesayangan</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💙</div>
+                <h3 class="feature-title">Cute Blue Theme</h3>
+                <p class="feature-description">Tema warna biru yang imut dan menenangkan dengan efek animasi yang menggemaskan</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3 class="feature-title">Mobile Friendly</h3>
+                <p class="feature-description">Tampilan yang responsif dan nyaman di semua perangkat untuk pengalaman terbaik</p>
+            </div>
+        </div>
+
+        <div class="quotes-section">
+            <p class="quote-text" id="quoteText">
+                "A picture is worth a thousand words, but with music, it becomes a thousand memories."
+            </p>
+            <p class="quote-author">- Sweet Blue Memories</p>
+        </div>
+    </div>
+
+    <script>
+        // Audio player functionality
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const durationDisplay = document.getElementById('duration');
+
+        // Photo upload functionality
+        const photoInput = document.getElementById('photoInput');
+        const photoPlaceholder = document.getElementById('photoPlaceholder');
+        const uploadArea = document.querySelector('.photo-upload-area');
+
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '12px';
+                    
+                    // Clear upload area and add image
+                    uploadArea.innerHTML = '';
+                    uploadArea.appendChild(img);
+                    uploadArea.style.cursor = 'default';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Play/Pause functionality
+        playBtn.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playBtn.textContent = '⏸️';
+            } else {
+                audioPlayer.pause();
+                playBtn.textContent = '▶️';
+            }
+        });
+
+        // Volume control
+        volumeSlider.addEventListener('input', () => {
+            audioPlayer.volume = volumeSlider.value;
+        });
+
+        // Progress bar update
+        audioPlayer.addEventListener('timeupdate', () => {
+            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressFill.style.width = progress + '%';
+            
+            // Update time display
+            currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
+        });
+
+        // Duration display
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            durationDisplay.textContent = formatTime(audioPlayer.duration);
+        });
+
+        // Progress bar click
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            const percentage = clickX / width;
+            audioPlayer.currentTime = percentage * audioPlayer.duration;
+        });
+
+        // Format time helper
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Audio ended event
+        audioPlayer.addEventListener('ended', () => {
+            playBtn.textContent = '▶️';
+            progressFill.style.width = '0%';
+        });
+
+        // Quotes rotation
+        const quotes = [
+            "A picture is worth a thousand words, but with music, it becomes a thousand memories.",
+            "Every photo has a story, every song has a soul.",
+            "Memories are made of moments, music makes them last forever.",
+            "The best memories are made with the perfect soundtrack.",
+            "Life is like music, and photos are the beautiful notes we collect along the way."
+        ];
+
+        let currentQuoteIndex = 0;
+        const quoteText = document.getElementById('quoteText');
+
+        setInterval(() => {
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            quoteText.style.opacity = '0';
+            setTimeout(() => {
+                quoteText.textContent = quotes[currentQuoteIndex];
+                quoteText.style.opacity = '1';
+            }, 500);
+        }, 5000);
+
+        // Initialize volume
+        audioPlayer.volume = 0.5;
+    </script>
 </body>
 </html>
